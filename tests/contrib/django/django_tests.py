@@ -199,7 +199,7 @@ class DjangoClientTest(TestCase):
         self.assertTrue(
             self.client.login(username='admin', password='admin'))
 
-        with mock.patch("django.contrib.auth.models.User.is_authenticated") as is_authenticated:
+        with mock.patch("django.contrib.auth.models.User.is_authenticated", new_callable=mock.PropertyMock) as is_authenticated:
             is_authenticated.side_effect = DatabaseError("Test Exception")
             self.assertRaises(Exception, self.client.get,
                               reverse('opbeat-raise-exc'))
