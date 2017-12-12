@@ -9,10 +9,12 @@ Large portions are
 :license: BSD, see LICENSE for more details.
 """
 
+from django.utils.deprecation import MiddlewareMixin
+
 from opbeat.middleware import Opbeat
 
 
-class Opbeat(Opbeat):
+class Opbeat(MiddlewareMixin, Opbeat):
     """
     Identical to the default WSGI middleware except that
     the client comes dynamically via ``get_client
