@@ -4,7 +4,6 @@ pytest.importorskip("django")  # isort:skip
 from os.path import join
 
 import django
-from django.core.urlresolvers import reverse
 from django.test import TestCase
 
 import mock
@@ -12,6 +11,11 @@ import pytest
 
 from conftest import BASE_TEMPLATE_DIR
 from opbeat.contrib.django.models import get_client, opbeat
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 # Testing Django 1.8+ backends
 TEMPLATES = (

@@ -14,7 +14,6 @@ from django.contrib.sites.models import Site
 from django.core.handlers.wsgi import WSGIRequest
 from django.core.management import call_command
 from django.core.signals import got_request_exception
-from django.core.urlresolvers import reverse
 from django.db import DatabaseError
 from django.http import QueryDict
 from django.template import TemplateSyntaxError
@@ -43,6 +42,11 @@ try:
 except ImportError:
     from opbeat.utils.compat import noop_decorator as with_eager_tasks
     has_with_eager_tasks = False
+
+try:
+    from django.urls import reverse
+except ImportError:
+    from django.core.urlresolvers import reverse
 
 
 settings.OPBEAT = {'CLIENT': 'tests.contrib.django.django_tests.TempStoreClient'}
