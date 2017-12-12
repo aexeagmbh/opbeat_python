@@ -250,7 +250,7 @@ class DjangoClientTest(TestCase):
             self.assertFalse('user' in event)
 
     def test_request_middleware_exception(self):
-        with self.settings(MIDDLEWARE_CLASSES=['tests.contrib.django.testapp.middleware.BrokenRequestMiddleware']):
+        with self.settings(MIDDLEWARE=['tests.contrib.django.testapp.middleware.BrokenRequestMiddleware']):
             self.assertRaises(ImportError, self.client.get, reverse('opbeat-raise-exc'))
 
             self.assertEquals(len(self.opbeat.events), 1)
@@ -267,7 +267,7 @@ class DjangoClientTest(TestCase):
     def test_response_middlware_exception(self):
         if django.VERSION[:2] < (1, 3):
             return
-        with self.settings(MIDDLEWARE_CLASSES=['tests.contrib.django.testapp.middleware.BrokenResponseMiddleware']):
+        with self.settings(MIDDLEWARE=['tests.contrib.django.testapp.middleware.BrokenResponseMiddleware']):
             self.assertRaises(ImportError, self.client.get, reverse('opbeat-no-error'))
 
             self.assertEquals(len(self.opbeat.events), 1)
@@ -310,7 +310,7 @@ class DjangoClientTest(TestCase):
             self.assertEquals(event['culprit'], 'tests.contrib.django.testapp.urls.handler500')
 
     def test_view_middleware_exception(self):
-        with self.settings(MIDDLEWARE_CLASSES=['tests.contrib.django.testapp.middleware.BrokenViewMiddleware']):
+        with self.settings(MIDDLEWARE=['tests.contrib.django.testapp.middleware.BrokenViewMiddleware']):
             self.assertRaises(ImportError, self.client.get, reverse('opbeat-raise-exc'))
 
             self.assertEquals(len(self.opbeat.events), 1)
@@ -401,7 +401,7 @@ class DjangoClientTest(TestCase):
         self.assertEquals(event['param_message'], {'message': 'test','params':()})
 
     def test_404_middleware(self):
-        with self.settings(MIDDLEWARE_CLASSES=['opbeat.contrib.django.middleware.Opbeat404CatchMiddleware']):
+        with self.settings(MIDDLEWARE=['opbeat.contrib.django.middleware.Opbeat404CatchMiddleware']):
             resp = self.client.get('/non-existant-page')
             self.assertEquals(resp.status_code, 404)
 
@@ -441,7 +441,7 @@ class DjangoClientTest(TestCase):
 
     def test_404_middleware_with_debug(self):
         with self.settings(
-                MIDDLEWARE_CLASSES=[
+                MIDDLEWARE=[
                     'opbeat.contrib.django.middleware.Opbeat404CatchMiddleware'
                 ],
                 DEBUG=True,
@@ -465,7 +465,7 @@ class DjangoClientTest(TestCase):
             self.assertEquals(len(self.opbeat.events), 0)
 
     def test_response_error_id_middleware(self):
-        with self.settings(MIDDLEWARE_CLASSES=[
+        with self.settings(MIDDLEWARE=[
                 'opbeat.contrib.django.middleware.OpbeatResponseErrorIdMiddleware',
                 'opbeat.contrib.django.middleware.Opbeat404CatchMiddleware']):
             resp = self.client.get('/non-existant-page')
@@ -636,7 +636,7 @@ class DjangoClientTest(TestCase):
 
     def test_transaction_metrics(self):
         self.opbeat.instrumentation_store.get_all()  # clear the store
-        with self.settings(MIDDLEWARE_CLASSES=[
+        with self.settings(MIDDLEWARE=[
                 'opbeat.contrib.django.middleware.OpbeatAPMMiddleware']):
             self.assertEqual(len(self.opbeat.instrumentation_store), 0)
             self.client.get(reverse('opbeat-no-error'))
@@ -682,7 +682,7 @@ class DjangoClientTest(TestCase):
         client.instrument_django_middleware = True
 
         with self.settings(
-            MIDDLEWARE_CLASSES=[
+            MIDDLEWARE=[
                 'opbeat.contrib.django.middleware.OpbeatAPMMiddleware',
                 'django.middleware.common.CommonMiddleware',
             ],
@@ -737,7 +737,7 @@ class DjangoClientTest(TestCase):
         client.instrument_django_middleware = True
 
         with self.settings(
-            MIDDLEWARE_CLASSES=[
+            MIDDLEWARE=[
                 'opbeat.contrib.django.middleware.OpbeatAPMMiddleware',
                 'django.middleware.common.CommonMiddleware',
             ],
@@ -789,7 +789,7 @@ class DjangoClientTest(TestCase):
         Redirect.objects.create(site=s, old_path='/redirect/me/', new_path='/here/')
 
         with self.settings(
-            MIDDLEWARE_CLASSES=[
+            MIDDLEWARE=[
                 'opbeat.contrib.django.middleware.OpbeatAPMMiddleware',
                 'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
             ],
@@ -848,7 +848,7 @@ class DjangoClientTest(TestCase):
     def test_request_metrics_name_override(self):
         self.opbeat.instrumentation_store.get_all()  # clear the store
         with self.settings(
-            MIDDLEWARE_CLASSES=[
+            MIDDLEWARE=[
                 'opbeat.contrib.django.middleware.OpbeatAPMMiddleware',
                 'tests.contrib.django.testapp.middleware.MetricsNameOverrideMiddleware',
             ]
@@ -864,7 +864,7 @@ class DjangoClientTest(TestCase):
     def test_request_metrics_404_resolve_error(self):
         self.opbeat.instrumentation_store.get_all()  # clear the store
         with self.settings(
-                MIDDLEWARE_CLASSES=[
+                MIDDLEWARE=[
                     'opbeat.contrib.django.middleware.OpbeatAPMMiddleware',
                 ]
         ):
@@ -1055,7 +1055,7 @@ def test_stacktraces_have_templates():
         TEMPLATES_copy = deepcopy(settings.TEMPLATES)
         TEMPLATES_copy[0]['OPTIONS']['debug'] = TEMPLATE_DEBUG
         with override_settings(
-            MIDDLEWARE_CLASSES=[
+            MIDDLEWARE=[
                 'opbeat.contrib.django.middleware.OpbeatAPMMiddleware'
             ],
             TEMPLATE_DEBUG=TEMPLATE_DEBUG,
@@ -1098,7 +1098,7 @@ def test_stacktrace_filtered_for_opbeat():
     with mock.patch(
             "opbeat.traces.RequestsStore.should_collect") as should_collect:
         should_collect.return_value = False
-        with override_settings(MIDDLEWARE_CLASSES=[
+        with override_settings(MIDDLEWARE=[
             'opbeat.contrib.django.middleware.OpbeatAPMMiddleware']):
             resp = client.get(reverse("render-heavy-template"))
     assert resp.status_code == 200
@@ -1125,7 +1125,7 @@ def test_perf_template_render(benchmark):
     instrumentation.control.instrument()
     with mock.patch("opbeat.traces.RequestsStore.should_collect") as should_collect:
         should_collect.return_value = False
-        with override_settings(MIDDLEWARE_CLASSES=[
+        with override_settings(MIDDLEWARE=[
             'opbeat.contrib.django.middleware.OpbeatAPMMiddleware']):
             resp = benchmark(client_get, client, reverse("render-heavy-template"))
     assert resp.status_code == 200
@@ -1165,7 +1165,7 @@ def test_perf_database_render(benchmark):
     with mock.patch("opbeat.traces.RequestsStore.should_collect") as should_collect:
         should_collect.return_value = False
 
-        with override_settings(MIDDLEWARE_CLASSES=[
+        with override_settings(MIDDLEWARE=[
             'opbeat.contrib.django.middleware.OpbeatAPMMiddleware']):
             resp = benchmark(client_get, client, reverse("render-user-template"))
         assert resp.status_code == 200
@@ -1205,7 +1205,7 @@ def test_perf_transaction_with_collection(benchmark):
 
         client = _TestClient()
 
-        with override_settings(MIDDLEWARE_CLASSES=[
+        with override_settings(MIDDLEWARE=[
             'opbeat.contrib.django.middleware.OpbeatAPMMiddleware']):
 
             for i in range(10):
@@ -1279,14 +1279,14 @@ class DjangoManagementCommandTest(TestCase):
 
     def test_middleware_not_set(self):
         stdout = six.StringIO()
-        with self.settings(MIDDLEWARE_CLASSES=()):
+        with self.settings(MIDDLEWARE=()):
             call_command('opbeat', 'check', stdout=stdout)
         output = stdout.getvalue()
         assert 'Opbeat APM middleware not set!' in output
 
     def test_middleware_not_first(self):
         stdout = six.StringIO()
-        with self.settings(MIDDLEWARE_CLASSES=(
+        with self.settings(MIDDLEWARE=(
             'foo',
             'opbeat.contrib.django.middleware.OpbeatAPMMiddleware'
         )):
@@ -1299,7 +1299,7 @@ class DjangoManagementCommandTest(TestCase):
         stdout = six.StringIO()
         resp = mock.Mock(status=200, getheader=lambda h: 'http://example.com')
         urlopen_mock.return_value = resp
-        with self.settings(MIDDLEWARE_CLASSES=(
+        with self.settings(MIDDLEWARE=(
                 'foo',
                 'opbeat.contrib.django.middleware.OpbeatAPMMiddleware'
         )):

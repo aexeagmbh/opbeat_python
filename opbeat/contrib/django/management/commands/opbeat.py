@@ -248,7 +248,7 @@ class Command(BaseCommand):
         self.write('')
 
         # check if middleware is set, and if it is at the first position
-        middleware = list(settings.MIDDLEWARE_CLASSES)
+        middleware = list(settings.MIDDLEWARE)
         try:
             pos = middleware.index(
                 'opbeat.contrib.django.middleware.OpbeatAPMMiddleware'
@@ -266,7 +266,7 @@ class Command(BaseCommand):
                 )
                 self.write(
                     'Opbeat APM works best if you add it at the top of your '
-                    'MIDDLEWARE_CLASSES'
+                    'MIDDLEWARE'
                 )
         except ValueError:
             self.write(
@@ -274,8 +274,8 @@ class Command(BaseCommand):
             )
             self.write(
                 '\n'
-                'Add it to your MIDDLEWARE_CLASSES like this:\n\n'
-                '    MIDDLEWARE_CLASSES = (\n'
+                'Add it to your MIDDLEWARE like this:\n\n'
+                '    MIDDLEWARE = (\n'
                 '        "opbeat.contrib.django.middleware.OpbeatAPMMiddleware",\n'
                 '        # your other middleware classes\n'
                 '    )\n'

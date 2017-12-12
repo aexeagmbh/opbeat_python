@@ -69,7 +69,7 @@ def pytest_configure(config):
             TEMPLATE_DEBUG=False,
             TEMPLATE_DIRS=[BASE_TEMPLATE_DIR],
             ALLOWED_HOSTS=['*'],
-            MIDDLEWARE_CLASSES=[
+            MIDDLEWARE=[
                 'django.contrib.sessions.middleware.SessionMiddleware',
                 'django.contrib.auth.middleware.AuthenticationMiddleware',
                 'django.contrib.messages.middleware.MessageMiddleware',

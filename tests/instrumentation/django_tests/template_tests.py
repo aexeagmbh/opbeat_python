@@ -42,7 +42,7 @@ class TracesTest(TestCase):
     @mock.patch("opbeat.traces.RequestsStore.should_collect")
     def test_template_rendering(self, should_collect):
         should_collect.return_value = False
-        with self.settings(MIDDLEWARE_CLASSES=[
+        with self.settings(MIDDLEWARE=[
             'opbeat.contrib.django.middleware.OpbeatAPMMiddleware']):
             self.client.get(reverse('render-heavy-template'))
             self.client.get(reverse('render-heavy-template'))
@@ -86,7 +86,7 @@ class TracesTest(TestCase):
     @mock.patch("opbeat.traces.RequestsStore.should_collect")
     def test_template_rendering_django18_jinja2(self, should_collect):
         should_collect.return_value = False
-        with self.settings(MIDDLEWARE_CLASSES=[
+        with self.settings(MIDDLEWARE=[
                 'opbeat.contrib.django.middleware.OpbeatAPMMiddleware'],
                 TEMPLATES=TEMPLATES
             ):

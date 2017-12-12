@@ -122,8 +122,8 @@ class OpbeatAPMMiddleware(MiddlewareMixin):
                     OpbeatAPMMiddleware._opbeat_instrumented = True
 
     def instrument_middlewares(self):
-        if getattr(django_settings, 'MIDDLEWARE_CLASSES', None):
-            for middleware_path in django_settings.MIDDLEWARE_CLASSES:
+        if getattr(django_settings, 'MIDDLEWARE', None):
+            for middleware_path in django_settings.MIDDLEWARE:
                 module_path, class_name = middleware_path.rsplit('.', 1)
                 try:
                     module = import_module(module_path)
