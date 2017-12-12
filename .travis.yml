@@ -2,31 +2,10 @@ sudo: false
 language: python
 python:
 - 3.6
-- nightly
 
 env:
-  matrix:
-    - WEBFRAMEWORK=django-2.0
-    - WEBFRAMEWORK=django-master
-  global:
-  - PIP_CACHE="$HOME/.pip_cache"'
-  - RUN_SCRIPT="./travis/run_tests.sh"
-matrix:
-  include:
-  - sudo: required
-    python: 3.6
-    services:
-    - docker
-    env: DOCKER_IMAGE=quay.io/pypa/manylinux1_x86_64 RUN_SCRIPT=./travis/run_docker.sh
-  - sudo: required
-    python: 3.6
-    services:
-    - docker
-    env: DOCKER_IMAGE=quay.io/pypa/manylinux1_i686 RUN_SCRIPT=./travis/run_docker.sh
-      PRE_CMD=linux32
-  allow_failures:
-  - env: WEBFRAMEWORK=django-master
-  - python: nightly
+  - WEBFRAMEWORK=django-2.0 PIP_CACHE="$HOME/.pip_cache"' RUN_SCRIPT="./travis/run_tests.sh"
+
 addons:
   apt:
     sources:
