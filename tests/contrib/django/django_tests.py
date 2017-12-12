@@ -286,7 +286,8 @@ class DjangoClientTest(TestCase):
             client = _TestClient(REMOTE_ADDR='127.0.0.1')
             client.handler = MockOpbeatMiddleware(MockClientHandler())
 
-            self.assertRaises(Exception, client.get, reverse('opbeat-raise-exc'))
+            with self.settings(MIDDLEWARE=[]):
+                self.assertRaises(Exception, client.get, reverse('opbeat-raise-exc'))
 
             self.assertEquals(len(self.opbeat.events), 2)
             event = self.opbeat.events.pop(0)
